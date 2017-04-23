@@ -173,8 +173,8 @@ Closure create_closure(AB& ab) {
 }
 //
 
-Edge edgeC;
-Edge edgeD;
+//Edge edgeC;
+//Edge edgeD;
 
 //Edge* g_edges[2];
 
@@ -213,8 +213,8 @@ int main(int argc, char* argv[])
 {   
 #if 1
 	//
-    //Edge edgeC;
-    //Edge edgeD;
+    Edge edgeC;
+    Edge edgeD;
 
     //flow::Logger log("log.txt");
 
