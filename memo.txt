@@ -1,0 +1,7 @@
+checkout
+
+add
+
+commit
+
+push
