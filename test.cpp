@@ -7,14 +7,21 @@ using namespace std;
 
 class FuncBlock;
 
+class Edge;
+
+Edge* g_edges[2];
+
 class Edge {
 private:
 	FuncBlock* m_fb_from;
 	FuncBlock* m_fb_to;
 	static int buf;
+	static int n;
 public:
 	Edge() {
 		id = 0;
+		g_edges[n] = this;
+		n++;
 	}
 	
 	Edge(int i):id(i){}
@@ -35,6 +42,7 @@ public:
 };
 
 int Edge::buf;
+int Edge::n = 0;
 
 class inputs {
 private:
@@ -168,20 +176,36 @@ Closure create_closure(AB& ab) {
 Edge edgeC;
 Edge edgeD;
 
+//Edge* g_edges[2];
+
 void start_session() {
-	inputs in1(NULL);
-	outputs out1(&edgeC);
+	inputs* ins[3];
+	outputs* ous[3];
+	int n = sizeof(g_edges) / sizeof(g_edges[0]);
+	ins[0] = new inputs(g_edges[0]);
+	for (int i = 0; i < n; i++) {
+		ous[i] = new outputs(g_edges[i]);
+		ins[i+1] = new inputs(g_edges[i]);
+	}
+	ous[n] = new outputs(g_edges[n-1]);
 
-	inputs in2(&edgeC);
-	outputs out2(&edgeD);
-
-	inputs in3(&edgeD);
-	outputs out3(NULL);
+	//inputs in1(NULL);
+	////
+	//outputs out1(&edgeC);
+	//inputs in2(&edgeC);
+	////
+	//outputs out2(&edgeD);
+	//inputs in3(&edgeD);
+	////
+	//outputs out3(NULL);
 
 	for (int i = 0; i < 10; i++) {
-		(*Closure::p_a)(in1, out1);
-		(*Closure::p_ab)(in2, out2);
-		(*Closure::p_b)(in3, out3);
+		//(*Closure::p_a)(in1, out1);
+		//(*Closure::p_ab)(in2, out2);
+		//(*Closure::p_b)(in3, out3);
+		(*Closure::p_a)(*ins[0], *ous[0]);
+		(*Closure::p_ab)(*ins[1], *ous[1]);
+		(*Closure::p_b)(*ins[2], *ous[2]);
 	}
 }
 
