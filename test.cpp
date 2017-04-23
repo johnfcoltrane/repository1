@@ -5,8 +5,6 @@
 //#include "block/websocket.hpp"
 using namespace std;
 
-//flow::Edge<int> edgeC;
-
 class FuncBlock;
 
 class Edge {
@@ -22,10 +20,6 @@ public:
 	Edge(int i):id(i){}
 	
 	int id;
-	//void set(FuncBlock& from, FuncBlock& to) {
-	//	m_fb_from = &from;
-	//	m_fb_to = &to;
-	//}
 	FuncBlock& from() {
 		return *m_fb_from;
 	}
@@ -35,15 +29,9 @@ public:
 	int cast_int() {
 		return buf;
 	}
-	//void operator()(int i) {
-	//	buf = i;
-	//}
 	void operator=(int i) {
 		buf = i;
 	}
-	//void setVal(int i) {
-	//	buf = i;
-	//}
 };
 
 int Edge::buf;
@@ -51,9 +39,9 @@ int Edge::buf;
 class inputs {
 private:
 	int buf;
-	Edge m_o;
+	Edge& m_o;
 public:
-	inputs(){}
+	inputs(Edge* po):m_o(*po) {}
 	Edge& operator()(int i){
 		return m_o;
 	}
@@ -61,36 +49,22 @@ public:
 
 class outputs {
 private:
-	int buf;
-	Edge m_o;
+	//int buf;
+	Edge &m_o;
+	//Edge* m_po;
 public:
-	outputs() {
+	//outputs() {
+		//m_po = NULL;
+	//}
+	outputs(Edge* po) : m_o(*po) {
 
 	}
-	outputs(Edge& o):m_o(o) {
 
-	}
-#if 1
-	Edge& operator()(int i){
-		buf = i;
+	Edge& operator()(int edge_id){
+		//buf = i;
 		return m_o;
+		//return *m_po;
 	}
-#else
-	Edge& getEdge(int i)
-	{
-		return m_o;
-	}
-#endif
-	//Edge& getEdge(int i){
-	//	return m_o;
-	//}
-
-	//outputs& operator=(int i) {
-	//	buf = i;
-	//}
-	//outputs& setBuf(int i) {
-	//	buf = i;
-	//}
 
 };
 
@@ -100,25 +74,12 @@ private:
     //flow::Edge<int>& m_edge;
 	Edge& m_edge;
 public:
-	//inputs m_in;
-	//outputs m_out;
 	A(Edge& out_edge) : m_edge(out_edge),i(0) {
     }
     void operator() (inputs& in, outputs& out) {
+
         //this_thread::sleep_for(chrono::milliseconds(500)); // 1000
-
-#if 1
 		out(m_edge.id) = i++; // todo:
-#else
-#if 1
-		out.getEdge(m_edge.id) = i++;
-#else
-		Edge &_edge = out.getEdge(m_edge.id);
-		_edge = i++;
-#endif
-#endif
-		//_edge.setVal(m_edge.id);
-
         if (i>10) {
             std::cout << "** stop_session() **" << std::endl;
 	    	//flow::stop_session();
@@ -154,9 +115,7 @@ public:
     }
     void operator() (inputs& in, outputs& out) {
         auto x = in(m_in_edge.id).cast_int(); // todo:
-        
 		out(m_out_edge.id) = x*2; // todo:
-		//out.getEdge(m_out_edge.id) = x * 2;
     }
 };
 
@@ -191,8 +150,6 @@ Edge* Closure::p_edge_d;
 Closure g_closure;
 //
 Closure create_closure(A& a) {
-	//auto f = [](A& a)->{ a(a.m_in, a.m_out); }; 
-	//auto f = [=] {return a;};
 	Closure::p_a = &a;
 	return g_closure;
 }
@@ -207,13 +164,19 @@ Closure create_closure(AB& ab) {
 	return g_closure;
 }
 //
+
+Edge edgeC;
+Edge edgeD;
+
 void start_session() {
-	inputs in1;
-	inputs in2;
-	inputs in3;
-	outputs out1;
-	outputs out2;
-	outputs out3;
+	inputs in1(NULL);
+	outputs out1(&edgeC);
+
+	inputs in2(&edgeC);
+	outputs out2(&edgeD);
+
+	inputs in3(&edgeD);
+	outputs out3(NULL);
 
 	for (int i = 0; i < 10; i++) {
 		(*Closure::p_a)(in1, out1);
@@ -226,8 +189,8 @@ int main(int argc, char* argv[])
 {   
 #if 1
 	//
-    Edge edgeC;
-    Edge edgeD;
+    //Edge edgeC;
+    //Edge edgeD;
 
     //flow::Logger log("log.txt");
 
