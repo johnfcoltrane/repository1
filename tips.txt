@@ -1,0 +1,29 @@
+# 全てのブランチを表示
+git branch -a
+
+# 全て最新に更新
+git pull
+
+# 現在のブランチを表示
+git branch --contains
+
+# 現在のブランチをpush
+git p
+
+# リポジトリ確認
+git remote -v
+
+# 以前コミットしたことのあるファイルのみadd
+git add -u
+
+# addしたもの全部を取り消し
+git reset HEAD
+
+# ファイル指定で取消
+git reset HEAD file-path
+
+# xxxxxxxxxxxx
+git rm xxxxx
+
+# 現在のブランチをpush
+git push origin HEAD
